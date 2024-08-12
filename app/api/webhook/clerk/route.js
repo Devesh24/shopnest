@@ -1,8 +1,8 @@
 import { Webhook } from 'svix'
-// import { createUser, deleteUser, updateUser } from "@/lib/actions/user.actions";
 import { clerkClient } from '@clerk/nextjs/server';
 import { NextResponse } from 'next/server';
 import { headers } from 'next/headers';
+import { createUser, deleteUser, updateUser } from '@/lib/actions/user.actions';
 
 export async function POST(req) {
 
@@ -54,58 +54,58 @@ export async function POST(req) {
   const eventType = evt.type;
 
     // webhook for create User
-  // if (eventType === "user.created") {
-  //   const { id, email_addresses, image_url, first_name, last_name, username } =
-  //     evt.data;
+  if (eventType === "user.created") {
+    const { id, email_addresses, image_url, first_name, last_name, username } =
+      evt.data;
 
-  //   const user = {
-  //     clerkId: id,
-  //     email: email_addresses[0].email_address,
-  //     username: username,
-  //     firstName: first_name, 
-  //     lastName: last_name, 
-  //     photo: image_url,
-  //   };
+    const user = {
+      clerkId: id,
+      email: email_addresses[0].email_address,
+      username: username,
+      firstName: first_name, 
+      lastName: last_name, 
+      photo: image_url,
+    };
 
-  //   // database action for creating user
-  //   const newUser = await createUser(user);
+    // database action for creating user
+    const newUser = await createUser(user);
 
-  //   //here we are making a db connection to our clerk model by defining the userId and passing it over as publicMatadata to our clerk user
-  //   if (newUser) {
-  //     await clerkClient.users.updateUserMetadata(id, {
-  //       publicMetadata: {
-  //         "userId": newUser._id,
-  //       },
-  //     });
-  //   }
+    //here we are making a db connection to our clerk model by defining the userId and passing it over as publicMatadata to our clerk user
+    if (newUser) {
+      await clerkClient.users.updateUserMetadata(id, {
+        publicMetadata: {
+          "userId": newUser._id,
+        },
+      });
+    }
 
-  //   return NextResponse.json({ message: "OK", user: newUser });
-  // }
+    return NextResponse.json({ message: "OK", user: newUser });
+  }
 
-  // // webhook for update User
-  // if (eventType === "user.updated") {
-  //   const { id, image_url, first_name, last_name, username } = evt.data;
+  // webhook for update User
+  if (eventType === "user.updated") {
+    const { id, image_url, first_name, last_name, username } = evt.data;
 
-  //   const user = {
-  //     firstName: first_name,
-  //     lastName: last_name,
-  //     username: username,
-  //     photo: image_url,
-  //   };
+    const user = {
+      firstName: first_name,
+      lastName: last_name,
+      username: username,
+      photo: image_url,
+    };
 
-  //   const updatedUser = await updateUser(id, user);
+    const updatedUser = await updateUser(id, user);
 
-  //   return NextResponse.json({ message: "OK", user: updatedUser });
-  // }
+    return NextResponse.json({ message: "OK", user: updatedUser });
+  }
 
-  // // webhook for delete User
-  // if (eventType === "user.deleted") {
-  //   const { id } = evt.data;
+  // webhook for delete User
+  if (eventType === "user.deleted") {
+    const { id } = evt.data;
 
-  //   const deletedUser = await deleteUser(id);
+    const deletedUser = await deleteUser(id);
 
-  //   return NextResponse.json({ message: "OK", user: deletedUser });
-  // }
+    return NextResponse.json({ message: "OK", user: deletedUser });
+  }
 
   return new Response('', { status: 200 })
 }
