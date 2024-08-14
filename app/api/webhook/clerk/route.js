@@ -1,16 +1,18 @@
-import { Webhook } from 'svix'
-import { clerkClient } from '@clerk/nextjs/server';
-import { NextResponse } from 'next/server';
-import { headers } from 'next/headers';
-import { createUser, deleteUser, updateUser } from '@/lib/actions/user.actions';
+import { Webhook } from "svix";
+import { clerkClient } from "@clerk/nextjs/server";
+import { NextResponse } from "next/server";
+import { headers } from "next/headers";
+import { createUser, deleteUser, updateUser } from "@/lib/actions/user.actions";
 
+// CLERK WEBHOOKS ARE USED TO CONNECT CLERK TO MONGODB
 export async function POST(req) {
-
   // You can find this in the Clerk Dashboard -> Webhooks -> choose the endpoint
-  const WEBHOOK_SECRET = process.env.WEBHOOK_SECRET
+  const WEBHOOK_SECRET = process.env.WEBHOOK_SECRET;
 
   if (!WEBHOOK_SECRET) {
-    throw new Error('Please add WEBHOOK_SECRET from Clerk Dashboard to .env or .env.local')
+    throw new Error(
+      "Please add WEBHOOK_SECRET from Clerk Dashboard to .env or .env.local"
+    );
   }
 
   // Get the headers
@@ -21,19 +23,19 @@ export async function POST(req) {
 
   // If there are no headers, error out
   if (!svix_id || !svix_timestamp || !svix_signature) {
-    return new Response('Error occured -- no svix headers', {
-      status: 400
-    })
+    return new Response("Error occured -- no svix headers", {
+      status: 400,
+    });
   }
 
   // Get the body
-  const payload = await req.json()
+  const payload = await req.json();
   const body = JSON.stringify(payload);
 
   // Create a new Svix instance with your secret.
   const wh = new Webhook(WEBHOOK_SECRET);
 
-  let evt
+  let evt;
 
   // Verify the payload with the headers
   try {
@@ -41,19 +43,21 @@ export async function POST(req) {
       "svix-id": svix_id,
       "svix-timestamp": svix_timestamp,
       "svix-signature": svix_signature,
-    })
+    });
   } catch (err) {
-    console.error('Error verifying webhook:', err);
-    return new Response('Error occured', {
-      status: 400
-    })
+    console.error("Error verifying webhook:", err);
+    return new Response("Error occured", {
+      status: 400,
+    });
   }
 
   // Do something with the payload
   // For this guide, you simply log the payload to the console
   const eventType = evt.type;
 
-    // webhook for create User
+  // UPDATED THIS ----------------------------------------------------------------------------------------
+
+  // webhook for create User
   if (eventType === "user.created") {
     const { id, email_addresses, image_url, first_name, last_name, username } =
       evt.data;
@@ -62,8 +66,8 @@ export async function POST(req) {
       clerkId: id,
       email: email_addresses[0].email_address,
       username: username,
-      firstName: first_name, 
-      lastName: last_name, 
+      firstName: first_name,
+      lastName: last_name,
       photo: image_url,
     };
 
@@ -74,7 +78,7 @@ export async function POST(req) {
     if (newUser) {
       await clerkClient.users.updateUserMetadata(id, {
         publicMetadata: {
-          "userId": newUser._id,
+          userId: newUser._id,
         },
       });
     }
@@ -93,6 +97,7 @@ export async function POST(req) {
       photo: image_url,
     };
 
+    // database action for updating user
     const updatedUser = await updateUser(id, user);
 
     return NextResponse.json({ message: "OK", user: updatedUser });
@@ -102,10 +107,13 @@ export async function POST(req) {
   if (eventType === "user.deleted") {
     const { id } = evt.data;
 
+    // database action for deleting user
     const deletedUser = await deleteUser(id);
 
     return NextResponse.json({ message: "OK", user: deletedUser });
   }
 
-  return new Response('', { status: 200 })
+  // ----------------------------------------------------------------------------------------
+
+  return new Response("", { status: 200 });
 }
