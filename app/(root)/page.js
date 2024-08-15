@@ -1,15 +1,18 @@
-import Home from "@/components/shared/Home";
-import { auth } from "@clerk/nextjs/server"
+"use client"
+
+import Banner from '@/components/shared/Banner';
+import Header from '@/components/shared/Header';
+import Products from '@/components/shared/Products';
+import { useState } from 'react'
 
 export default function HomePage() {
 
-    // to find the details from the public metadata from clerk
-    const { sessionClaims } = auth()
-    const userId = sessionClaims && String(sessionClaims.userId)
-    
+  const [cartCount, setCartCount] = useState(0) // to lift state up and send to navbar, for cart size updation
   return (
-    <main>
-        <Home userId={userId} />
-    </main>
+    <div>
+        <Header cartCount={cartCount} />
+        <Banner />
+        <Products setCartCount={setCartCount} />
+    </div>
   );
 }

@@ -13,9 +13,26 @@ import Link from "next/link"
 import { useUser } from "@clerk/nextjs"
 
 // CART COMPONENT
-const Cart = ({userId, setCartCount}) => {
+// COUPENS -----------------------
+// {
+//     coupenCode: "FLAT150",
+//     discountType: "flat",
+//     discount: 150
+// },
+// {
+//     coupenCode: "SALEISLIVE",
+//     discountType: "percent",
+//     discount: 45
+// },
+// {
+//     coupenCode: "SHOPNEST50",
+//     discountType: "percent",
+//     discount: 50
+// },
+const Cart = ({setCartCount}) => {
 
-    const { isSignedIn } = useUser(); // clerk hook, to check if user is signed in or not
+    const { isSignedIn, user } = useUser(); // clerk hook, to check if user is signed in or not
+    const [userId, setUserId] = useState("") //user id of the logged in user
 
     const [cart, setCart] = useState([]) // to store the cart details (only productId and count of each product)
     const [cartItems, setCartItems] = useState([]) // to store the complete product details of the cart items
@@ -28,12 +45,14 @@ const Cart = ({userId, setCartCount}) => {
     const [coupenFound, setCoupenFound] = useState(null) // is coupen valid or not
 
     useEffect(() => {
+        if(!isSignedIn && !user) return; //if user is not signed in
         const fetchData = async () => {
             try {
                 // fetching the user cart
-                const cartData = await getUserCart(userId)
+                const cartData = await getUserCart(user.id)
                 setCart(cartData.cart)
                 setCartLen(cartData.count)
+                setUserId(cartData.userId)
                 
                 // fetching the complete product details of the cart
                 const items = await getCartProducts(cartData.cart)
@@ -54,7 +73,7 @@ const Cart = ({userId, setCartCount}) => {
             }
         }
         fetchData()
-    },[])
+    },[user])
 
     //to stop this useffect from running on initial render, becuase it sets the cart values to []
     const hasPageBeenRendered = useRef(false) 
@@ -63,7 +82,11 @@ const Cart = ({userId, setCartCount}) => {
         if(isSignedIn && hasPageBeenRendered.current)
         {
             const updateUser = async () => {
-                const updatedUser = await updateUserCart(userId, cart)
+                try {
+                    const updatedUser = await updateUserCart(userId, cart)
+                } catch (error) {
+                    console.log(error);
+                }
             }
             updateUser()
             setCartCount(cart.length) //to send to navbar for count update on cart icon
