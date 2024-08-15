@@ -9,7 +9,7 @@ const UserCart = ({userId}) => {
   return (
     <div>
         <Header cartCount={cartCount} />
-        <div className='relative top-0 w-full h-[80vh] bg-cover md:bg-center text-white flex-center' style={{backgroundImage: "linear-gradient(to right, rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('/assets/images/cart.jpg')"}}>
+        <div className='relative top-0 w-full h-[70vh] bg-cover md:bg-center text-white flex-center' style={{backgroundImage: "linear-gradient(to right, rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('/assets/images/cart.jpg')"}}>
             <div className="text-center mt-12">
                 <p className="h1-bolder">SHOPNEST</p>
                 <p className="h2-bold tracking-widest">Your Cart</p>

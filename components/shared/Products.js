@@ -58,7 +58,7 @@ const Products = ({userId, setCartCount}) => {
   return (
     <div className="wrapper my-10 flex-between flex-col gap-6">
         <Search placeholder={"Search Products..."} setQuery={setQuery} />
-        <div className='flex justify-center flex-wrap gap-1 lg:gap-6'>
+        <div className='flex justify-center flex-wrap gap-1 lg:gap-6 items-center'>
             {
                 productData.map((product) => (
                     <ProductCard key={product._id} product={product} userId={userId} cart={cart} setCart={setCart} />

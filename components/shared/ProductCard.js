@@ -129,10 +129,10 @@ const ProductCard = ({product, userId, cart, setCart, setCartItems, cartItems=nu
     }
     
   return (
-    <div className={`${cartItems ? 'w-[48%] lg:w-full' : 'w-[48%]'} h-fit lg:min-h-[35vh] flex flex-col lg:flex-row gap-3 lg:mt-2 hover:shadow-xl transition-shadow duration-500 p-2 border rounded-lg`}>
+    <div className={`${cartItems ? 'w-[48%] lg:w-full' : 'w-[48%]'} h-fit lg:min-h-[35vh] flex flex-col lg:flex-row gap-3 lg:mt-2 hover:shadow-xl transition-shadow duration-500 p-1 md:p-2 border rounded-lg`}>
         <div className='lg:w-[40%] h-[20vh] md:h-[25vh] lg:h-auto bg-cover' style={{backgroundImage: `url(${product.imageUrl})`}} />
 
-        <div className='lg:w-[60%] flex justify-between flex-col p-2 h-[35vh] md:h-[30vh] lg:h-auto'>
+        <div className='lg:w-[60%] flex justify-between flex-col p-2 h-[30vh] md:h-[30vh] lg:h-auto'>
             <div>
                 <Link href={`/products/${product._id}`}>
                     <p className='text-sm md:text-base lg:text-lg font-extrabold line-clamp-2 hover:underline'>{product.title}</p>
@@ -140,7 +140,7 @@ const ProductCard = ({product, userId, cart, setCart, setCartItems, cartItems=nu
                 <p className='text-xs md:text-sm lg:text-base line-clamp-3 text-gray-600'>{product.details}</p>
             </div>
             <div>
-                <div className='flex flex-col md:flex-row md:items-center md:gap-3 ps-1'>
+                <div className='flex flex-col md:flex-row md:items-center md:gap-3 ps-1 mt-2'>
                     <div className='flex items-center gap-3'>
                         <p className='md:text-lg text-blue-700 font-bold'>₹ {calculateDiscount(product.origPrice, product.discountInPercent)}</p>
                         <p className='text-sm md:text-base line-through text-gray-600'>{product.origPrice}</p>

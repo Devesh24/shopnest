@@ -16,7 +16,7 @@ const Header = ({userId, cartCount=null}) => {
         // to change the background of navbar after a certain scroll amount
         const handleScroll = () => {
             const offset = window.scrollY;
-            offset > 500 ? setScrolled(true) : setScrolled(false);
+            offset > 450 ? setScrolled(true) : setScrolled(false);
         };
         window.addEventListener('scroll', handleScroll);
 
