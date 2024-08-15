@@ -6,7 +6,7 @@ import ProductCard from "./ProductCard"
 import { getUserCart, updateUserCart } from "@/lib/actions/user.actions"
 import Search from "./Search"
 
-const Products = ({userId, setCartCount}) => {
+const Products = ({userId=null, setCartCount}) => {
     const [query, setQuery] = useState("") //search query
 
     const [productData, setProductData] = useState([]) //store data of all products based on search query
@@ -26,7 +26,7 @@ const Products = ({userId, setCartCount}) => {
     const [cart, setCart] = useState([]) //cart details
     useEffect(() => {
         // if user is logged in, fetch the user cart
-        if(userId)
+        if(userId !== null)
         {
             const fetchData = async () => {
                 try {
@@ -44,7 +44,7 @@ const Products = ({userId, setCartCount}) => {
     const hasPageBeenRendered = useRef(false) 
     useEffect(() => {
         // if user is logged in and there is a change in cart value, update the user cart in the database
-        if(userId && hasPageBeenRendered.current)
+        if(userId!==null && hasPageBeenRendered.current)
         {
             const updateUser = async () => {
                 const updatedUser = await updateUserCart(userId, cart)

@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge"
 import { useEffect, useState } from 'react'
 import { getUserCart } from '@/lib/actions/user.actions'
 
-const Header = ({userId, cartCount=null}) => {
+const Header = ({userId=null, cartCount=null}) => {
     const [shake, setShake] = useState(false) // for triggering shake animation
 
     const [scrolled, setScrolled] = useState(false); // amount of window scrolled
@@ -31,7 +31,7 @@ const Header = ({userId, cartCount=null}) => {
         {
             setCartLen(cartCount)
         }
-        else if(userId) //if cart size is not updated from cart or product page, we would not have the cartCount prop
+        else if(userId !== null) //if cart size is not updated from cart or product page, we would not have the cartCount prop
         {
             // fetch the cart size using userId
             const fetchData = async () => {
