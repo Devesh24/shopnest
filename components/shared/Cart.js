@@ -10,9 +10,12 @@ import { calculateDiscount } from "@/lib/utils"
 import { Input } from "@/components/ui/input"
 import { matchCoupen } from "@/lib/actions/coupen.actions"
 import Link from "next/link"
+import { useUser } from "@clerk/nextjs"
 
 // CART COMPONENT
-const Cart = ({userId=null, setCartCount}) => {
+const Cart = ({userId, setCartCount}) => {
+
+    const { isSignedIn } = useUser(); // clerk hook, to check if user is signed in or not
 
     const [cart, setCart] = useState([]) // to store the cart details (only productId and count of each product)
     const [cartItems, setCartItems] = useState([]) // to store the complete product details of the cart items
@@ -57,7 +60,7 @@ const Cart = ({userId=null, setCartCount}) => {
     const hasPageBeenRendered = useRef(false) 
     useEffect(() => {
         // if user is logged in and there is a change in cart value, update the user cart in the database
-        if(userId!==null && hasPageBeenRendered.current)
+        if(isSignedIn && hasPageBeenRendered.current)
         {
             const updateUser = async () => {
                 const updatedUser = await updateUserCart(userId, cart)
@@ -68,6 +71,7 @@ const Cart = ({userId=null, setCartCount}) => {
         hasPageBeenRendered.current = true
     },[cart])
 
+    // to handle the click of apply coupen or remove coupen button click
     const handleCoupenSubmit = async () => {
         if(coupenFound !== true) //add coupen and check if valid or not
         {
